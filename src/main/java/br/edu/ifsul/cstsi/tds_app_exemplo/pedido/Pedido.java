@@ -3,6 +3,10 @@ package br.edu.ifsul.cstsi.tds_app_exemplo.pedido;
 import br.edu.ifsul.cstsi.tds_app_exemplo.cliente.Cliente;
 import br.edu.ifsul.cstsi.tds_app_exemplo.item.Item;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,6 +14,10 @@ import java.util.Collection;
 
 @Entity
 @Table(name = "pedidos")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Pedido {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

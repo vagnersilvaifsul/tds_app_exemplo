@@ -1,11 +1,19 @@
 package br.edu.ifsul.cstsi.tds_app_exemplo.produto;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "produtos")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Produto {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

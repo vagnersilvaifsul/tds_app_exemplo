@@ -2,11 +2,19 @@ package br.edu.ifsul.cstsi.tds_app_exemplo.cliente;
 
 import br.edu.ifsul.cstsi.tds_app_exemplo.pedido.Pedido;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Collection;
 
 @Entity
 @Table(name = "clientes")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Cliente {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
