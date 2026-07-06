@@ -1,6 +1,7 @@
 package br.edu.ifsul.cstsi.tds_app_exemplo.produto;
 
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /*
@@ -16,32 +17,32 @@ import org.springframework.web.bind.annotation.*;
 public class ProdutoController {
 
     @GetMapping
-    public String findAll(){
-        return "findAll";
+    public ResponseEntity<String> findAll(){
+        return ResponseEntity.ok("findAll");
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable Long id){
-        return "findById" + " " + id;
+    public ResponseEntity<String> findById(@PathVariable Long id){
+        return ResponseEntity.ok("findById" + " " + id);
     }
 
     @GetMapping("/nome/{nome}")
-    public String findByNome(@PathVariable String nome){
-        return "findByNome" + nome;
+    public ResponseEntity<String> findByNome(@PathVariable String nome){
+        return ResponseEntity.ok("findByNome" + nome);
     }
 
     @PostMapping
-    public String insert(@RequestBody Produto produto){
-        return "insert" + " " + produto;
+    public ResponseEntity<String> insert(@RequestBody Produto produto){
+        return ResponseEntity.ok("insert" + " " + produto);
     }
 
     @PutMapping("{id}")
-    public String update(@PathVariable Long id, @RequestBody Produto produto){
-        return "update" + " " + id + " " + produto;
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody Produto produto){
+        return ResponseEntity.ok("update" + " " + id + " " + produto);
     }
 
     @DeleteMapping("{id}")
-    public String delete(@PathVariable Long id){
-        return "delete" + " " + id;
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        return ResponseEntity.ok("delete" + " " + id);
     }
 }
