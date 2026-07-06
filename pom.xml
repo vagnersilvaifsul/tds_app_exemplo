@@ -66,10 +66,13 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>3.0.3</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-rest</artifactId>
-        </dependency>
+        <!-- Cria os controladores padrões a partir das Repositories -->
+        <!-- https://docs.spring.io/spring-data/rest/docs/4.1.2/reference/html/#getting-started.boot -->
+        <!-- Vai ficar comentado até que seja solucionada a issue do spring-doc -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-rest</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
