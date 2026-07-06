@@ -58,6 +58,14 @@
             <artifactId>mariadb-java-client</artifactId>
             <version>3.0.4</version>
         </dependency>
+
+        <!-- Para a Documentação do app -->
+        <!-- https://springdoc.org/ -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>3.0.3</version>
+        </dependency>
     </dependencies>
 
     <build>
