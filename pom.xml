@@ -30,11 +30,15 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
+        <!-- Para os Controllers do app - Entrega um container Spring MVC (em contraste a um container Webflux) -->
+        <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/web.html -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
-
+        <!-- Para Testes do app-->
+        <!-- Essa dependência é adicionada automaticamente ao criar o projeto, pois, um projeto Spring Boot já nasce buscando a garantia de qualidade do software -->
+        <!-- https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
