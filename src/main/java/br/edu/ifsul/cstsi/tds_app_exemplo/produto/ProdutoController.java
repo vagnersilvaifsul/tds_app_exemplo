@@ -2,6 +2,7 @@ package br.edu.ifsul.cstsi.tds_app_exemplo.produto;
 
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -27,6 +28,7 @@ public class ProdutoController {
     }
 
     @GetMapping
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<List<ProdutoDtoResponse>> findAll(){
 
         return ResponseEntity.ok(produtoRepository.findAll().stream().map(ProdutoDtoResponse::new).toList());
