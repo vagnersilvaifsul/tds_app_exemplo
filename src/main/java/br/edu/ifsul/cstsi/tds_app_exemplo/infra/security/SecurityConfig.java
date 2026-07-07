@@ -9,14 +9,10 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration //classe de configuração do spring boot
+@Configuration //adiciona ao Context do app
 @EnableWebSecurity //habilita a segurança web
 @EnableMethodSecurity(securedEnabled = true) //habilita a granularidade de segurança por método (nos controllers)
 public class SecurityConfig {
@@ -38,28 +34,11 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) //desabilita a proteção contra ataques Cross-site Request Forger
             .authorizeHttpRequests(authorize -> {
-                authorize.requestMatchers(HttpMethod.POST, "/api/v1/login").permitAll(); //exceto, a rota de login
+                authorize.requestMatchers(HttpMethod.POST, "/api/v1/autenticacao/login").permitAll(); //exceto, a rota de login
                 authorize.anyRequest().authenticated(); //demais rotas devem ser autenticadas
             })
             .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
-
-    //Este método é utilizado para autenticar em memória (isso é demonstrado antes de avançar para autenticação em banco de dados e JWT)
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.withUsername("user")
-            .password(passwordEncoder.encode("user"))
-            .roles("USER")
-            .build();
-
-        UserDetails admin = User.withUsername("admin")
-            .password(passwordEncoder.encode("admin"))
-            .roles("USER", "ADMIN")
-            .build();
-
-        return new InMemoryUserDetailsManager(user, admin);
-    }
-
 }
