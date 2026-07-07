@@ -84,6 +84,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <!-- Para adicionar o JWT nativo do Spring Boot -->
+        <!-- https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/index.html -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-oauth2-resource-server</artifactId>
+        </dependency>
 
         <!-- Útil -->
         <!-- Lombok (para os Boilerplates das classes de modelo, construtores, getters, setters, etc) -->
