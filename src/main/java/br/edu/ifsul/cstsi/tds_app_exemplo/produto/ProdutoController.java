@@ -1,6 +1,7 @@
 package br.edu.ifsul.cstsi.tds_app_exemplo.produto;
 
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,7 @@ public class ProdutoController {
     }
 
     @PostMapping
-    public ResponseEntity<String> insert(@RequestBody ProdutoDtoPost produtoDTOPost, UriComponentsBuilder uriBuilder){
+    public ResponseEntity<String> insert(@Valid @RequestBody ProdutoDtoPost produtoDTOPost, UriComponentsBuilder uriBuilder){
         var p = produtoRepository.save(new Produto(
                 null,
                 produtoDTOPost.nome(),
@@ -65,7 +66,7 @@ public class ProdutoController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ProdutoDtoResponse> update(@PathVariable Long id, @RequestBody ProdutoDtoPut produtoDTOPut){
+    public ResponseEntity<ProdutoDtoResponse> update(@PathVariable Long id, @Valid @RequestBody ProdutoDtoPut produtoDTOPut){
         var p = produtoRepository.save(new Produto(
                 id,
                 produtoDTOPut.nome(),
