@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.edu.ifsul.cstsi</groupId>
     <artifactId>tds_app_exemplo</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>tds_app_exemplo</name>
     <description>tds_app_exemplo</description>
     <url/>
