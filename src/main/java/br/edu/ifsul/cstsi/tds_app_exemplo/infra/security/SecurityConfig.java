@@ -1,5 +1,6 @@
 package br.edu.ifsul.cstsi.tds_app_exemplo.infra.security;
 
+import br.edu.ifsul.cstsi.tds_app_exemplo.infra.jwt.CustomJwtAuthenticationConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

@@ -1,4 +1,4 @@
-package br.edu.ifsul.cstsi.tds_app_exemplo.infra.security;
+package br.edu.ifsul.cstsi.tds_app_exemplo.infra.jwt;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.springframework.beans.factory.annotation.Value;
