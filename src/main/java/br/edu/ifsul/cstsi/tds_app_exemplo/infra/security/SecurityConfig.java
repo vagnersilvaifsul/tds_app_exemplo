@@ -49,7 +49,12 @@ public class SecurityConfig {
                 authorize.requestMatchers(
                         path.matcher("/v3/api-docs/**"),
                         path.matcher("/swagger-ui.html"),
-                        path.matcher("/swagger-ui/**")
+                        path.matcher("/swagger-ui/**"),
+                        // Capstone MCP: libera o handshake/endpoint do servidor MCP. Simplificação
+                        // pedagógica (ambiente de sala de aula) — em produção, a especificação do MCP
+                        // recomenda OAuth2 para servidores expostos via HTTP (ver módulo mcp-server-security
+                        // do Spring AI, que se apoiaria no mesmo Resource Server/JWT que já está configurado aqui).
+                        path.matcher("/mcp/**")
                 ).permitAll(); //exceto, a rota de documentação (para doc em html no navegador)
                 authorize.requestMatchers(path.matcher(HttpMethod.POST, "/api/v1/autenticacao/login")).permitAll(); //exceto, a rota de login
                 authorize.anyRequest().authenticated(); //demais rotas devem ser autenticadas

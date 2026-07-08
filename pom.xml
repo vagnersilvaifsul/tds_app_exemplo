@@ -28,7 +28,21 @@
     </scm>
     <properties>
         <java.version>17</java.version>
+        <!-- Confira a última patch disponível no Maven Central antes de fazer o build -->
+        <spring-ai.version>2.0.0</spring-ai.version>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <!-- BOM do Spring AI: gerencia as versões de todos os módulos do Spring AI (MCP, modelos, etc.) -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <!-- Para os Controllers do app - Entrega um container Spring MVC (em contraste a um container Webflux) -->
         <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/web.html -->
@@ -99,6 +113,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security-oauth2-resource-server</artifactId>
+        </dependency>
+
+        <!-- Capstone MCP: expõe os beans anotados com @McpTool via Streamable-HTTP, na mesma aplicação
+             Servlet que já roda a API REST (não usa STDIO, que exigiria abrir a aplicação como subprocesso). -->
+        <!-- https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-mcp-server-webmvc</artifactId>
         </dependency>
 
         <!-- Útil -->

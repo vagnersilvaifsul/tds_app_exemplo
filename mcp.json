@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "tds-app-exemplo": {
+      "type": "streamable-http",
+      "url": "http://localhost:8080/mcp"
+    }
+  }
+}
