@@ -133,13 +133,6 @@ class SecurityConfigTest {
     void endPointProdutosQuandoVerboGetPostPutDeleteENaoEstaAutenticadoEspera401NaoAutenticado() throws Exception {
         //ARRANGE
         var url = "/api/v1/produtos";
-        var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgUHJvZHV0b3MgRXhlbXBsbyBkZSBUQURTIiwic3ViIjoiYWRtaW5AZW1haWwuY29tIiwiaWF0IjoxNzE0NzYxMDMxfQ.aQCggW0xCjEtsHDqJGxeu-5lkrrevFrjLZSl9aHDTrI";
-        var body = """
-                {
-                  "key": "value",
-                  "key2": "value2"
-                }
-                """;
 
         //ACT + ASSERT
         this.mvc.perform(get(url)) //verbo na rota

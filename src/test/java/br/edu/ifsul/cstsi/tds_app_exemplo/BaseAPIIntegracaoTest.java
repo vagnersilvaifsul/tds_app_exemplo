@@ -2,7 +2,7 @@ package br.edu.ifsul.cstsi.tds_app_exemplo;
 
 import br.edu.ifsul.cstsi.tds_app_exemplo.autenticacao.AutenticacaoService;
 import br.edu.ifsul.cstsi.tds_app_exemplo.cliente.Cliente;
-import br.edu.ifsul.cstsi.tds_app_exemplo.infra.security.TokenService;
+import br.edu.ifsul.cstsi.tds_app_exemplo.infra.jwt.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
