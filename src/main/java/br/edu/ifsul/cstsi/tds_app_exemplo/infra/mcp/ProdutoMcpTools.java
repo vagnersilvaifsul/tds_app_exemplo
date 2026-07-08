@@ -1,4 +1,4 @@
-package br.edu.ifsul.cstsi.tds_app_exemplo.mcp;
+package br.edu.ifsul.cstsi.tds_app_exemplo.infra.mcp;
 
 import br.edu.ifsul.cstsi.tds_app_exemplo.produto.Produto;
 import br.edu.ifsul.cstsi.tds_app_exemplo.produto.ProdutoRepository;
