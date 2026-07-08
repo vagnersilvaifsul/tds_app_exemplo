@@ -1,4 +1,4 @@
-package br.edu.ifsul.cstsi.tds_app_exemplo.infra.security;
+package br.edu.ifsul.cstsi.tds_app_exemplo.infra.jwt;
 
 import br.edu.ifsul.cstsi.tds_app_exemplo.cliente.Cliente;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;

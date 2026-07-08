@@ -1,4 +1,4 @@
-package br.edu.ifsul.cstsi.tds_app_exemplo.infra.security;
+package br.edu.ifsul.cstsi.tds_app_exemplo.infra.jwt;
 
 import br.edu.ifsul.cstsi.tds_app_exemplo.autenticacao.AutenticacaoRepository;
 import org.springframework.core.convert.converter.Converter;
