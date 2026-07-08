@@ -1,8 +1,8 @@
 package br.edu.ifsul.cstsi.tds_app_exemplo.autenticacao;
 
 import br.edu.ifsul.cstsi.tds_app_exemplo.cliente.Cliente;
-import br.edu.ifsul.cstsi.tds_app_exemplo.infra.security.TokenJwtDto;
-import br.edu.ifsul.cstsi.tds_app_exemplo.infra.security.TokenService;
+import br.edu.ifsul.cstsi.tds_app_exemplo.infra.jwt.TokenJwtDto;
+import br.edu.ifsul.cstsi.tds_app_exemplo.infra.jwt.TokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
