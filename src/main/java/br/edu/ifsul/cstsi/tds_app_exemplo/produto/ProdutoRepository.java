@@ -12,7 +12,6 @@ import java.util.List;
     permite alternar entre Domain Speak e Query Speak rapidamente. É muita flexibilidade!
  */
 
-//@RepositoryRestResource(exported = false) //se o sprig-rest-data estiver funcionando é preciso desligá-lo na Repository que você irá desenvolver
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     /*
         As consultas que retornam coleções devolvem List (vazia quando não encontram nada). Não é preciso envolver uma

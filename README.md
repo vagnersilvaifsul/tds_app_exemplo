@@ -4,7 +4,7 @@ Este projeto demonstra a construção de API REST com a utilização do Spring B
 
 Lista de habilidades exploradas:
 1. ORM com Spring Data;
-2. Construção de Controllers com Spring REST e Repositories para acesso ao banco de dados;
+2. Repositories do Spring Data para acesso ao banco de dados;
 3. Documentação da API com Spring Doc;
 4. Construção de Controllers com @RestController e @RequestMapping;
 5. Autenticação com o esquema Basic Auth (em memória e banco de dados) e JWT (em banco de dados);
