@@ -49,11 +49,11 @@ class SecurityConfigTest {
 
 
     @Test
-    void endpointLoginQuandoUsuarioInexistenteEspera403NaoAutorizado() throws Exception {
+    void endpointLoginQuandoUsuarioInexistenteEspera401NaoAutorizado() throws Exception {
         //ARRANGE
         var json = """
                 {
-                  "email": "admin",
+                  "email": "naoexiste@email.com",
                   "senha": "Teste12@"
                 }
                 """;
@@ -67,16 +67,16 @@ class SecurityConfigTest {
         ).andReturn().getResponse(); //a response da requisição
 
         //ASSERT
-        Assertions.assertEquals(403, response.getStatus());
+        Assertions.assertEquals(401, response.getStatus());
     }
 
     @Test
-    void endpointLoginQuandoUsuarioExistenteESenhaIncorretaEspera403NaoAutorizado() throws Exception {
-        //ARRANGE
+    void endpointLoginQuandoUsuarioExistenteESenhaIncorretaEspera401NaoAutorizado() throws Exception {
+        //ARRANGE (senha no formato válido, mas incorreta)
         var json = """
                 {
                   "email": "admin@email.com",
-                  "senha": "123456"
+                  "senha": "Errada12@"
                 }
                 """;
         var url = "/api/v1/autenticacao/login";
@@ -89,7 +89,32 @@ class SecurityConfigTest {
         ).andReturn().getResponse(); //a response da requisição
 
         //ASSERT
-        Assertions.assertEquals(403, response.getStatus());
+        Assertions.assertEquals(401, response.getStatus());
+    }
+
+    @Test
+    void endpointLoginQuandoDadosInvalidosEspera400ComOsCamposInvalidos() throws Exception {
+        //ARRANGE (e-mail sem @ e senha fora do padrão)
+        var json = """
+                {
+                  "email": "admin",
+                  "senha": "123456"
+                }
+                """;
+        var url = "/api/v1/autenticacao/login";
+
+        //ACT
+        var response = mvc.perform(
+                post(url)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        //ASSERT (400 Bad Request, no formato Problem Details, com a lista de campos inválidos)
+        Assertions.assertEquals(400, response.getStatus());
+        Assertions.assertTrue(response.getContentType().startsWith("application/problem+json"));
+        Assertions.assertTrue(response.getContentAsString().contains("email"));
+        Assertions.assertTrue(response.getContentAsString().contains("senha"));
     }
 
     @Test
