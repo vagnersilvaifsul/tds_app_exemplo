@@ -19,12 +19,16 @@ import java.math.BigDecimal;
 public class Item {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private BigDecimal quantidade;
-    private BigDecimal totalItem;
-    private Byte situacao;
+    private Integer quantidade; //Integer, como o estoque do Produto (de onde a quantidade é baixada)
+    private BigDecimal totalItem; //quantidade x valor de venda do produto no momento da compra
+    private Boolean situacao; //true = ativo, false = cancelado
 
-    //Associações
-    @ManyToOne
+    /*
+        Associações:
+          - pedido é LAZY: quem navega é o pedido (pedido.getItems()), o item raramente precisa carregar o pedido.
+          - produto continua EAGER (o padrão do @ManyToOne): todo item exibido precisa do nome do produto.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id", referencedColumnName = "id", nullable = false)
     private Pedido pedido;
     @ManyToOne

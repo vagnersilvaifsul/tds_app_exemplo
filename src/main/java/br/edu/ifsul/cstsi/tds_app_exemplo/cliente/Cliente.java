@@ -30,12 +30,21 @@ public class Cliente implements UserDetails { //UserDetails usuário padrão do 
     private String email;
     private String senha;
     private boolean isConfirmado = false;
-    private Byte situacao;
+    private Boolean situacao; //true = ativo, false = inativo
 
-    //Associações
-    @OneToMany(mappedBy = "cliente", fetch = FetchType.EAGER)
-    private Collection<Pedido> pedidos;
+    /*
+        Associações e estratégias de carregamento (fetch):
+          - LAZY (preguiçoso): a associação só é buscada no banco quando o código a acessa. É o padrão para coleções
+            (@OneToMany e @ManyToMany) e deve ser a escolha na maioria dos casos.
+          - EAGER (ansioso): a associação é buscada junto com a entidade, sempre.
 
+        pedidos é LAZY: carregar um cliente (o que acontece em TODA requisição autenticada, ver
+        CustomJwtAuthenticationConverter) não deve trazer todos os seus pedidos, e os itens de cada pedido, junto.
+     */
+    @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY)
+    private List<Pedido> pedidos;
+
+    //perfis permanece EAGER: o Spring Security precisa dos perfis (getAuthorities) em toda requisição autenticada
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "clientes_perfis",
             joinColumns = @JoinColumn(name = "clientes_id", referencedColumnName = "id"),

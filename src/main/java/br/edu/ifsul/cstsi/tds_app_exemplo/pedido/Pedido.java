@@ -10,7 +10,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "pedidos")
@@ -22,15 +23,22 @@ public class Pedido {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String pagamento;
-    private String estado;
+    @Enumerated(EnumType.STRING) //grava o nome da constante (NOVO, PAGO...) e não a sua posição
+    @Column(length = 20)
+    private EstadoPedido estado;
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
-    private Byte situacao;
+    private Boolean situacao; //true = ativo, false = cancelado
     private BigDecimal totalPedido;
 
-    //Associações
-    @OneToMany(mappedBy = "pedido", fetch = FetchType.EAGER)
-    private Collection<Item> items;
+    /*
+        Associações:
+          - items é LAZY: os itens só são buscados quando o código acessa getItems() (dentro de uma transação, ver PedidoService).
+          - cascade = PERSIST: ao salvar um pedido novo, o JPA salva também os itens que estão na lista. Assim o pedido e
+            seus itens são gravados juntos, na mesma transação, sem precisar de uma ItemRepository.save() para cada item.
+     */
+    @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<Item> items = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "cliente_id", referencedColumnName = "id", nullable = false)
     private Cliente cliente;
