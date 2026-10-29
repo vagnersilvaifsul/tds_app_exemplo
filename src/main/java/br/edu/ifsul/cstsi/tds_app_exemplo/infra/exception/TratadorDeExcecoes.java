@@ -67,6 +67,11 @@ public class TratadorDeExcecoes {
         return build(HttpStatus.FORBIDDEN, "Acesso negado", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(RegraDeNegocioException.class)
+    public ResponseEntity<ErroPadrao> handleRegraDeNegocio(RegraDeNegocioException ex, WebRequest request) {
+        return build(HttpStatus.CONFLICT, "Regra de negócio violada", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErroPadrao> handleDataIntegrity(DataIntegrityViolationException ex, WebRequest request) {
         return build(HttpStatus.CONFLICT, "Violação de integridade de dados", ex.getMostSpecificCause().getMessage(), request);
