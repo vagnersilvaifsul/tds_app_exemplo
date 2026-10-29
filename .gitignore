@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Relatório de cobertura de testes gerado pelo IntelliJ ###
+htmlReport/
