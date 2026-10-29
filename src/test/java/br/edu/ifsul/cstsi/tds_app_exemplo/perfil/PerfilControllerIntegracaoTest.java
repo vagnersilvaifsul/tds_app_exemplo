@@ -61,4 +61,9 @@ public class PerfilControllerIntegracaoTest extends BaseAPIIntegracaoTest {
         //o perfil ROLE_ADMIN (id 1) está associado ao admin@email.com na tabela clientes_perfis
         assertEquals(HttpStatus.CONFLICT, delete(URL + "/1", String.class).getStatusCode());
     }
+
+    @Test
+    public void deleteDeIdInexistenteEspera404() {
+        assertEquals(HttpStatus.NOT_FOUND, delete(URL + "/100000", Void.class).getStatusCode());
+    }
 }

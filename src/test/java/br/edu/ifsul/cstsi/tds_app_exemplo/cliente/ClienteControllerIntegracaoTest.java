@@ -2,6 +2,7 @@ package br.edu.ifsul.cstsi.tds_app_exemplo.cliente;
 
 import br.edu.ifsul.cstsi.tds_app_exemplo.BaseAPIIntegracaoTest;
 import br.edu.ifsul.cstsi.tds_app_exemplo.TdsAppExemploApplication;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -86,5 +88,45 @@ public class ClienteControllerIntegracaoTest extends BaseAPIIntegracaoTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertTrue(response.getBody().contains("email"));
         assertTrue(response.getBody().contains("senha"));
+    }
+
+    @Test
+    @DisplayName("PUT com nova senha e novos perfis: a senha nova passa a valer no login")
+    public void updateComNovaSenhaENovosPerfis() {
+        // ARRANGE
+        var location = post(URL, novoCliente("teste.senha@email.com", "Teste12@"), String.class)
+                .getHeaders().getLocation().toString();
+
+        // ACT
+        var response = put(location, new ClienteDtoRequest("Teste", "da Silva", "teste.senha@email.com", "Nova12@x",
+                List.of("ROLE_ADMIN"), null), ClienteDtoResponse.class);
+
+        // ASSERT
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(List.of("ROLE_ADMIN"), response.getBody().perfis());
+        var login = "/api/v1/autenticacao/login";
+        assertEquals(HttpStatus.OK, post(login, Map.of("email", "teste.senha@email.com", "senha", "Nova12@x"), String.class).getStatusCode());
+        assertEquals(HttpStatus.UNAUTHORIZED, post(login, Map.of("email", "teste.senha@email.com", "senha", "Teste12@"), String.class).getStatusCode());
+
+        // limpeza
+        delete(location, Void.class);
+    }
+
+    @Test
+    public void updateComEmailDeOutroClienteEspera409() {
+        // ARRANGE
+        var location = post(URL, novoCliente("teste.email@email.com", "Teste12@"), String.class)
+                .getHeaders().getLocation().toString();
+
+        // ACT + ASSERT (admin@email.com já pertence ao cliente 1)
+        assertEquals(HttpStatus.CONFLICT, put(location, novoCliente("admin@email.com", null), String.class).getStatusCode());
+
+        // limpeza
+        delete(location, Void.class);
+    }
+
+    @Test
+    public void deleteDeIdInexistenteEspera404() {
+        assertEquals(HttpStatus.NOT_FOUND, delete(URL + "/100000", Void.class).getStatusCode());
     }
 }

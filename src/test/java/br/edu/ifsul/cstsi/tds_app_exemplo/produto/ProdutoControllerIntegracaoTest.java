@@ -214,4 +214,29 @@ public class ProdutoControllerIntegracaoTest extends BaseAPIIntegracaoTest {
         // ASSERT
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
+
+    @Test //Esta anotação JUnit sinaliza que este método é um caso de teste
+    public void testDeleteDeIdInexistenteEspera404NotFound() {
+        assertEquals(HttpStatus.NOT_FOUND, delete("/api/v1/produtos/100000", null).getStatusCode());
+    }
+
+    @Test //Esta anotação JUnit sinaliza que este método é um caso de teste
+    public void testUpdateSemSituacaoMantemASituacaoAtual() {
+        // ARRANGE (cria um produto inativo)
+        var location = post("/api/v1/produtos", new ProdutoDtoRequest("Teste", "Desc. do produto Teste",
+                new BigDecimal("5.00"), new BigDecimal("10.00"), 100, false), ProdutoDtoResponse.class)
+                .getHeaders().get("location").get(0);
+
+        // ACT (PUT sem informar a situação)
+        var response = put(location, new ProdutoDtoRequest("Teste", "Desc. do produto Teste",
+                new BigDecimal("5.00"), new BigDecimal("12.00"), 100, null), ProdutoDtoResponse.class);
+
+        // ASSERT (o valor mudou, a situação continua inativa)
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(new BigDecimal("12.00"), response.getBody().valorDeVenda());
+        assertEquals(Boolean.FALSE, response.getBody().situacao());
+
+        // limpeza
+        delete(location, null);
+    }
 }
