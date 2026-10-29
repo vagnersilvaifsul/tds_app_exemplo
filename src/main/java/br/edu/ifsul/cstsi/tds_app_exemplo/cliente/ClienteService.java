@@ -8,9 +8,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /*
     Camada de serviço do cliente. Ela existe porque o cadastro e a alteração têm regras de negócio:
@@ -78,9 +79,9 @@ public class ClienteService {
     }
 
     //converte os nomes dos perfis nas entidades Perfil (lança 404 se algum não existir)
-    private List<Perfil> buscaPerfis(List<String> nomes) {
+    private Set<Perfil> buscaPerfis(List<String> nomes) {
         var nomesPerfis = (nomes == null || nomes.isEmpty()) ? List.of(PERFIL_PADRAO) : nomes;
-        var perfis = new ArrayList<Perfil>();
+        var perfis = new LinkedHashSet<Perfil>();
         for (String nome : nomesPerfis) {
             perfis.add(perfilRepository.findByNome(nome)
                     .orElseThrow(() -> new EntityNotFoundException("Perfil não encontrado: " + nome)));

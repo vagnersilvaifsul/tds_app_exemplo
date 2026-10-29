@@ -13,7 +13,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "clientes")
@@ -44,12 +46,20 @@ public class Cliente implements UserDetails { //UserDetails usuário padrão do 
     @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY)
     private List<Pedido> pedidos;
 
-    //perfis permanece EAGER: o Spring Security precisa dos perfis (getAuthorities) em toda requisição autenticada
+    /*
+        perfis permanece EAGER: o Spring Security precisa dos perfis (getAuthorities) em toda requisição autenticada.
+
+        Set (e não List): com List, o Hibernate cria a tabela de junção clientes_perfis SEM chave primária (uma List
+        admite elementos repetidos). Como o data.sql roda a cada inicialização (spring.sql.init.mode=always), os
+        INSERTs em clientes_perfis eram aceitos de novo a cada execução e duplicavam os registros (os das outras
+        tabelas falham por chave primária repetida e são ignorados pelo continue-on-error).
+        Com Set (que não admite repetidos), o Hibernate cria a chave primária composta (clientes_id, perfis_id).
+     */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "clientes_perfis",
             joinColumns = @JoinColumn(name = "clientes_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "perfis_id", referencedColumnName = "id"))
-    private List<Perfil> perfis;
+    private Set<Perfil> perfis = new LinkedHashSet<>();
 
 
     @Override
