@@ -19,3 +19,8 @@ insert into clientes_perfis(clientes_id, perfis_id)
 values (1, 1);
 insert into clientes_perfis(clientes_id, perfis_id)
 values (2, 2);
+-- cliente inativo (situacao = false): usado no SecurityConfigTest para verificar que ele não consegue se autenticar
+insert into clientes(id, nome, sobrenome, email, senha, is_confirmado, situacao)
+values (3, 'Inativo', 'do Sistema', 'inativo@email.com', '$2a$10$GNPFCV7./ZvNwdY8mCBofu7gsBnK1lVUErPLX1qM9W/ljW52sVa6W',true, false);
+insert into clientes_perfis(clientes_id, perfis_id)
+values (3, 2);

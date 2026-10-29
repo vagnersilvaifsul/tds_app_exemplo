@@ -92,9 +92,15 @@ public class Cliente implements UserDetails { //UserDetails usuário padrão do 
         return UserDetails.super.isCredentialsNonExpired();
     }
 
+    /*
+        Usuário habilitado = cliente ativo (situacao = true). O Spring Security consulta este método no login
+        (DaoAuthenticationProvider) e lança DisabledException para um cliente inativo, que o TratadorDeExcecoes
+        converte em 401. O CustomJwtAuthenticationConverter faz a mesma verificação a cada requisição, para que um
+        cliente desativado depois do login não continue usando o token que já tinha.
+     */
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return Boolean.TRUE.equals(situacao);
     }
 
     //Método utilitário para gerar o Hash da senha

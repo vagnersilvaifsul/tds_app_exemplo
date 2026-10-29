@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -101,6 +102,16 @@ public class TratadorDeExcecoes extends ResponseEntityExceptionHandler {
     @ExceptionHandler({EntityNotFoundException.class, NoSuchElementException.class})
     public ProblemDetail handleNotFound(RuntimeException ex) {
         return problema(HttpStatus.NOT_FOUND, "Recurso não encontrado", ex.getMessage());
+    }
+
+    /*
+        401 Unauthorized: cliente inativo tentando fazer login (Cliente#isEnabled() devolve false).
+        Precisa vir antes do handler de AuthenticationException? Não: o Spring escolhe o handler da exceção mais
+        específica (DisabledException é subclasse de AuthenticationException), independentemente da ordem dos métodos.
+     */
+    @ExceptionHandler(DisabledException.class)
+    public ProblemDetail handleDisabled(DisabledException ex) {
+        return problema(HttpStatus.UNAUTHORIZED, "Usuário inativo", "Este usuário está inativo. Procure o administrador do sistema");
     }
 
     //401 Unauthorized: falha na autenticação feita pelo controller (ex.: e-mail ou senha incorretos no login)

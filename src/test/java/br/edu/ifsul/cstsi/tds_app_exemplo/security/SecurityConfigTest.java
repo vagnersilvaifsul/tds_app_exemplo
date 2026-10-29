@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
       4. Com token, mas sem o perfil exigido: 403 Forbidden (eu sei quem você é, mas você não pode).
 
     Os tokens são gerados direto pelo TokenService (sem passar pelo login), a partir dos usuários do data.sql de testes:
-    admin@email.com (ROLE_ADMIN) e user@email.com (ROLE_USER).
+    admin@email.com (ROLE_ADMIN), user@email.com (ROLE_USER) e inativo@email.com (ROLE_USER, situacao = false).
  */
 @SpringBootTest
 @AutoConfigureMockMvc //configura o MockMvc (container com Servlet, mas sem o servidor web)
@@ -50,11 +50,14 @@ class SecurityConfigTest {
 
     private String tokenAdmin;
     private String tokenUser;
+    private String tokenInativo;
 
     @BeforeEach
     void geraTokens() {
         tokenAdmin = tokenService.geraToken((Cliente) autenticacaoService.loadUserByUsername("admin@email.com"));
         tokenUser = tokenService.geraToken((Cliente) autenticacaoService.loadUserByUsername("user@email.com"));
+        //simula um token emitido antes de o cliente ser desativado
+        tokenInativo = tokenService.geraToken((Cliente) autenticacaoService.loadUserByUsername("inativo@email.com"));
     }
 
     //adiciona o header Authorization: Bearer <token> na requisição
@@ -116,6 +119,16 @@ class SecurityConfigTest {
         }
 
         @Test
+        void clienteInativoEspera401() throws Exception {
+            //senha correta, mas o cliente está inativo (Cliente#isEnabled() devolve false)
+            mvc.perform(json(post(LOGIN), """
+                            { "email": "inativo@email.com", "senha": "Teste12@" }
+                            """))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.title").value("Usuário inativo"));
+        }
+
+        @Test
         void dadosInvalidosEspera400ComOsCamposInvalidos() throws Exception {
             mvc.perform(json(post(LOGIN), """
                             { "email": "admin", "senha": "123456" }
@@ -150,6 +163,12 @@ class SecurityConfigTest {
             //um token válido com um caractere trocado na assinatura: o JwtDecoder recusa
             var adulterado = tokenUser.substring(0, tokenUser.length() - 2) + (tokenUser.endsWith("A") ? "BB" : "AA");
             mvc.perform(comToken(get("/api/v1/produtos/1"), adulterado)).andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        void tokenDeClienteInativoEspera401() throws Exception {
+            //o token é válido (assinatura e expiração), mas o cliente foi desativado: o CustomJwtAuthenticationConverter recusa
+            mvc.perform(comToken(get("/api/v1/produtos/1"), tokenInativo)).andExpect(status().isUnauthorized());
         }
 
         @Test

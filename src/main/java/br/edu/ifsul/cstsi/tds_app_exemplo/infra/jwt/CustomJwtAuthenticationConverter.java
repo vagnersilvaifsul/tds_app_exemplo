@@ -4,6 +4,7 @@ import br.edu.ifsul.cstsi.tds_app_exemplo.autenticacao.AutenticacaoRepository;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,10 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Abstract
 
         if (usuario == null) {
             throw new BadCredentialsException("Usuário do token JWT não encontrado");
+        }
+        if (!usuario.isEnabled()) {
+            //o token ainda é válido (assinatura e expiração), mas o cliente foi desativado depois do login: 401
+            throw new DisabledException("Usuário do token JWT está inativo");
         }
         return new UsernamePasswordAuthenticationToken(usuario, jwt, usuario.getAuthorities());
     }
