@@ -3,6 +3,7 @@ package br.edu.ifsul.cstsi.tds_app_exemplo.pedido;
 import br.edu.ifsul.cstsi.tds_app_exemplo.BaseAPIIntegracaoTest;
 import br.edu.ifsul.cstsi.tds_app_exemplo.TdsAppExemploApplication;
 import br.edu.ifsul.cstsi.tds_app_exemplo.item.ItemDtoRequest;
+import br.edu.ifsul.cstsi.tds_app_exemplo.produto.ProdutoDtoRequest;
 import br.edu.ifsul.cstsi.tds_app_exemplo.produto.ProdutoDtoResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -140,5 +141,73 @@ public class PedidoControllerIntegracaoTest extends BaseAPIIntegracaoTest {
 
         // limpeza
         patch(URL + "/" + pedido.id() + "/cancelamento", null);
+    }
+
+    @Test
+    @DisplayName("Regra de dono: um cliente não vê nem cancela o pedido de outro (403)")
+    public void pedidoDeOutroClienteEspera403() {
+        // ARRANGE (o admin faz um pedido)
+        var pedido = criaPedido(new ItemDtoRequest(1L, 1)).getBody();
+        assertNotNull(pedido);
+
+        // ACT + ASSERT (o user tenta ver e cancelar o pedido do admin)
+        loginComo("user@email.com");
+        assertEquals(HttpStatus.FORBIDDEN, get(URL + "/" + pedido.id(), String.class).getStatusCode());
+        assertEquals(HttpStatus.FORBIDDEN, patchComErro(URL + "/" + pedido.id() + "/cancelamento", null).getStatusCode());
+
+        // limpeza (o dono cancela, devolvendo o estoque)
+        loginComo("admin@email.com");
+        assertEquals(HttpStatus.OK, patch(URL + "/" + pedido.id() + "/cancelamento", null).getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Produto inativo não pode ser vendido (409)")
+    public void insertComProdutoInativoEspera409() {
+        // ARRANGE (cria um produto inativo só para o teste)
+        var produto = post("/api/v1/produtos",
+                new ProdutoDtoRequest("Produto Inativo", "Produto inativo do teste", new BigDecimal("1.00"), new BigDecimal("2.00"), 10, false),
+                ProdutoDtoResponse.class).getBody();
+        assertNotNull(produto);
+
+        // ACT + ASSERT
+        assertEquals(HttpStatus.CONFLICT, criaPedidoComErro(new ItemDtoRequest(produto.id(), 1)).getStatusCode());
+
+        // limpeza (nenhum item foi gravado por causa do rollback, então o produto pode ser excluído)
+        assertEquals(HttpStatus.OK, delete("/api/v1/produtos/" + produto.id(), Void.class).getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Pedido cancelado não muda de estado (409)")
+    public void alteraEstadoDePedidoCanceladoEspera409() {
+        // ARRANGE
+        var pedido = criaPedido(new ItemDtoRequest(2L, 1)).getBody();
+        assertNotNull(pedido);
+        assertEquals(HttpStatus.OK, patch(URL + "/" + pedido.id() + "/cancelamento", null).getStatusCode());
+
+        // ACT + ASSERT
+        assertEquals(HttpStatus.CONFLICT, patchComErro(URL + "/" + pedido.id() + "/estado", new EstadoPedidoDtoRequest(EstadoPedido.PAGO)).getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Pedido já enviado não pode ser cancelado (409)")
+    public void cancelaPedidoEnviadoEspera409() {
+        // ARRANGE
+        var produto = get("/api/v1/produtos/3", ProdutoDtoResponse.class).getBody();
+        assertNotNull(produto);
+        var pedido = criaPedido(new ItemDtoRequest(3L, 1)).getBody();
+        assertNotNull(pedido);
+        assertEquals(HttpStatus.OK, patch(URL + "/" + pedido.id() + "/estado", new EstadoPedidoDtoRequest(EstadoPedido.ENVIADO)).getStatusCode());
+
+        // ACT + ASSERT
+        assertEquals(HttpStatus.CONFLICT, patchComErro(URL + "/" + pedido.id() + "/cancelamento", null).getStatusCode());
+
+        /*
+            Limpeza: o pedido enviado não pode ser cancelado, então o estoque não volta sozinho. Para o banco de testes
+            (físico) não perder 1 unidade a cada execução, o estoque é restaurado com um PUT no produto.
+            O valorDeCompra (5.00) vem do data.sql de testes, pois ele não sai na API (ProdutoDtoResponse).
+         */
+        var restaura = new ProdutoDtoRequest(produto.nome(), produto.descricao(), new BigDecimal("5.00"),
+                produto.valorDeVenda(), produto.estoque(), produto.situacao());
+        assertEquals(HttpStatus.OK, put("/api/v1/produtos/3", restaura, ProdutoDtoResponse.class).getStatusCode());
     }
 }

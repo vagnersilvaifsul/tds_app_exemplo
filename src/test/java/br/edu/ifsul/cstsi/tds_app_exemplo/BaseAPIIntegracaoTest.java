@@ -42,8 +42,16 @@ public abstract class BaseAPIIntegracaoTest {
     //Método para logar um usuário e obter o token
     @BeforeEach //essa anotação faz com que o método seja executado antes dos demais, no setup
     public void setupTest() {
+        loginComo("admin@email.com"); //note que, por padrão, os testes passam com o perfil "admin"
+    }
+
+    /*
+        Troca o usuário dos próximos requests do teste (gera o token sem passar pela rota de login).
+        Útil para testar regras que dependem de QUEM faz a requisição, ex.: um cliente tentando ver o pedido de outro.
+     */
+    protected void loginComo(String email) {
         // Le usuário
-         Cliente user = (Cliente) service.loadUserByUsername("admin@email.com"); //note que os testes estão passando com o perfil "admin"
+        Cliente user = (Cliente) service.loadUserByUsername(email);
         assertNotNull(user);
 
         // Gera token
