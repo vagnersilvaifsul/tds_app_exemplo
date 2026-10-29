@@ -166,6 +166,15 @@ class SecurityConfigTest {
         }
 
         @Test
+        void tokenDeUsuarioQueNaoExisteMaisEspera401() throws Exception {
+            //token assinado corretamente, mas para um e-mail que não está no banco (ex.: cliente excluído depois do login)
+            var fantasma = new Cliente();
+            fantasma.setEmail("fantasma@email.com");
+            var tokenFantasma = tokenService.geraToken(fantasma);
+            mvc.perform(comToken(get("/api/v1/produtos/1"), tokenFantasma)).andExpect(status().isUnauthorized());
+        }
+
+        @Test
         void tokenDeClienteInativoEspera401() throws Exception {
             //o token é válido (assinatura e expiração), mas o cliente foi desativado: o CustomJwtAuthenticationConverter recusa
             mvc.perform(comToken(get("/api/v1/produtos/1"), tokenInativo)).andExpect(status().isUnauthorized());
