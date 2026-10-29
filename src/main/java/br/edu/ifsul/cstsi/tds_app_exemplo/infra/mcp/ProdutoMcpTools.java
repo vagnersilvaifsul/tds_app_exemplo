@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /*
-    Capstone MCP: expõe o domínio Produto (já construído pelos alunos nas semanas anteriores) como
+    MCP: expõe o domínio Produto (já construído nas semanas anteriores) como
     ferramentas MCP, para que um cliente de IA (Claude Desktop, Claude Code) consiga consultá-lo em
     linguagem natural.
 
@@ -41,6 +41,6 @@ public class ProdutoMcpTools {
     @McpTool(description = "Busca produtos cujo nome começa com o texto informado")
     public List<Produto> buscarProdutoPorNome(
             @McpToolParam(description = "Início do nome do produto, ex: 'caf' para Café", required = true) String nome) {
-        return produtoRepository.findByNomeStartingWith(nome).orElse(List.of());
+        return produtoRepository.findByNomeStartingWith(nome);
     }
 }

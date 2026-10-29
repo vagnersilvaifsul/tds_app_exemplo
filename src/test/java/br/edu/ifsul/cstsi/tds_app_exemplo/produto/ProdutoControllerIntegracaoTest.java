@@ -95,16 +95,17 @@ public class ProdutoControllerIntegracaoTest extends BaseAPIIntegracaoTest {
     @Test //Esta anotação JUnit sinaliza que este método é um caso de teste
     public void testInsertEspera201CreatedE404ENotFound() {
         // ARRANGE
-        var ProdutoDTOPost = new ProdutoDtoPost(
+        var produtoDtoRequest = new ProdutoDtoRequest(
                 "Teste",
                 "Desc. do produto Teste",
                 new BigDecimal("5.00"),
                 new BigDecimal("10.00"),
-                100
+                100,
+                null //situação não informada: o produto nasce ativo
         );
 
         // ACT
-        var response = post("/api/v1/produtos", ProdutoDTOPost, null);
+        var response = post("/api/v1/produtos", produtoDtoRequest, ProdutoDtoResponse.class);
 
         // ASSERT
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -115,6 +116,8 @@ public class ProdutoControllerIntegracaoTest extends BaseAPIIntegracaoTest {
         assertEquals("Desc. do produto Teste", p.descricao());
         assertEquals(new BigDecimal("10.00"), p.valorDeVenda());
         assertEquals(Integer.valueOf(100), p.estoque());
+        assertEquals(Boolean.TRUE, p.situacao()); //situação não informada no POST: nasce ativo
+        assertEquals("Teste", response.getBody().nome()); //o 201 Created também devolve o produto criado no corpo
 
         // ACT
         delete(location, null);
@@ -126,15 +129,16 @@ public class ProdutoControllerIntegracaoTest extends BaseAPIIntegracaoTest {
     @Test //Esta anotação JUnit sinaliza que este método é um caso de teste
     public void testUpdateEspera200OkE404ENotFound() {
         // ARRANGE
-        var ProdutoDTOPost = new ProdutoDtoPost(
+        var produtoDtoRequest = new ProdutoDtoRequest(
                 "Teste",
                 "Desc. do produto Teste",
                 new BigDecimal("5.00"),
                 new BigDecimal("10.00"),
-                100
+                100,
+                null //situação não informada: o produto nasce ativo
         );
 
-        var responsePost = post("/api/v1/produtos", ProdutoDTOPost, null);
+        var responsePost = post("/api/v1/produtos", produtoDtoRequest, ProdutoDtoResponse.class);
         assertEquals(HttpStatus.CREATED, responsePost.getStatusCode());
         var location = responsePost.getHeaders().get("location").get(0);
         var pDto = getProduto(location).getBody();
@@ -144,7 +148,7 @@ public class ProdutoControllerIntegracaoTest extends BaseAPIIntegracaoTest {
         assertEquals(new BigDecimal("10.00"), pDto.valorDeVenda());
         assertEquals(Integer.valueOf(100), pDto.estoque());
         //prepara um DTO para o PUT
-        var produtoDTOPut = new ProdutoDtoPut(
+        var produtoDtoRequestPut = new ProdutoDtoRequest(
                 "Teste Modificado",
                 "Desc. do produto Teste Modificado",
                 new BigDecimal("20.00"),
@@ -154,7 +158,7 @@ public class ProdutoControllerIntegracaoTest extends BaseAPIIntegracaoTest {
         );
 
         // ACT
-        var responsePUT = put(location, produtoDTOPut, ProdutoDtoResponse.class);
+        var responsePUT = put(location, produtoDtoRequestPut, ProdutoDtoResponse.class);
 
         // ASSERT
         assertEquals(HttpStatus.OK, responsePUT.getStatusCode());
@@ -162,6 +166,10 @@ public class ProdutoControllerIntegracaoTest extends BaseAPIIntegracaoTest {
         assertEquals("Desc. do produto Teste Modificado", responsePUT.getBody().descricao());
         assertEquals(new BigDecimal("50.00"), responsePUT.getBody().valorDeVenda());
         assertEquals(Integer.valueOf(500), responsePUT.getBody().estoque());
+        assertEquals(Boolean.FALSE, responsePUT.getBody().situacao());
+
+        // ACT + ASSERT (PUT em um id inexistente não cria um produto novo: devolve 404)
+        assertEquals(HttpStatus.NOT_FOUND, put("/api/v1/produtos/100000", produtoDtoRequestPut, ProdutoDtoResponse.class).getStatusCode());
 
         // ACT
         delete(location, null);
@@ -174,14 +182,15 @@ public class ProdutoControllerIntegracaoTest extends BaseAPIIntegracaoTest {
     @Test //Esta anotação JUnit sinaliza que este método é um caso de teste
     public void testDeleteEspera200OkE404NotFound() {
         // ARRANGE
-        var produto = new Produto();
-        produto.setNome("Teste");
-        produto.setDescricao("Desc. do produto Teste");
-        produto.setValorDeCompra(new BigDecimal("5.00"));
-        produto.setValorDeVenda(new BigDecimal("10.00"));
-        produto.setEstoque(100);
-        produto.setSituacao(true);
-        var responsePost = post("/api/v1/produtos", produto, null);
+        var produtoDtoRequest = new ProdutoDtoRequest(
+                "Teste",
+                "Desc. do produto Teste",
+                new BigDecimal("5.00"),
+                new BigDecimal("10.00"),
+                100,
+                true
+        );
+        var responsePost = post("/api/v1/produtos", produtoDtoRequest, ProdutoDtoResponse.class);
         assertEquals(HttpStatus.CREATED, responsePost.getStatusCode());
         var location = responsePost.getHeaders().get("location").get(0);
         var p = getProduto(location).getBody();
