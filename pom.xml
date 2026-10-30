@@ -108,6 +108,13 @@
             <artifactId>spring-boot-starter-security-oauth2-resource-server</artifactId>
         </dependency>
 
+        <!-- Para a validação da integridade dos dados (Bean Validation, implementada pelo Hibernate Validator) -->
+        <!-- https://docs.spring.io/spring-boot/reference/io/validation.html -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
         <!-- Capstone MCP: expõe os beans anotados com @McpTool via Streamable-HTTP, na mesma aplicação
              Servlet que já roda a API REST (não usa STDIO, que exigiria abrir a aplicação como subprocesso). -->
         <!-- https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html -->
