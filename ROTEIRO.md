@@ -124,6 +124,8 @@ Para cada commit, faça três perguntas: *o que mudou?*, *por que mudou?* e *com
 
 > O `TratadorDeExcecoes` foi reescrito no padrão Problem Details (RFC 9457) no commit `9159257` (Etapa 10): estude as duas versões e compare.
 
+> Nos commits desta etapa, o `pom.xml` ainda não declara o `spring-boot-starter-validation`: o Bean Validation chegava de carona no SpringDoc. Ele passou a ser declarado no commit `45558b4` (Etapa 10). No seu projeto, declare-o já na T5.
+
 ---
 
 ## Etapa 6 — Testes de integração (T6)
@@ -195,6 +197,7 @@ Cada correção abaixo é uma lição sobre um erro comum. Leia a mensagem do co
 | `eab85a8` | DTOs padronizados (um de entrada, outro de saída) e um PUT que não cria um registro novo quando o id não existe. |
 | `e0e5ee0` | Remoção do Spring Data REST: com controllers próprios, ele só expunha dados indevidos (inclusive o hash da senha dos clientes). |
 | `9159257` | Erros no padrão **Problem Details (RFC 9457)**, estendendo o `ResponseEntityExceptionHandler`; validação com 400 (não 403) e login com 401. |
+| `45558b4` | **Dependência transitiva:** o Bean Validation funcionava sem estar no `pom.xml`, porque chegava pelo SpringDoc (`./mvnw dependency:tree -Dincludes=org.hibernate.validator` mostra o caminho). Se o SpringDoc saísse do projeto, o `@Valid` pararia de validar sem nenhum erro. Agora o `spring-boot-starter-validation` está declarado. |
 | `1004ef1` | **List × Set** em `@ManyToMany`: com `List`, a tabela de junção fica sem chave primária e o `data.sql` duplicava os registros. |
 | `c49e803` e `b378cad` | O `SecurityConfigTest` como uma varredura da segurança (rotas públicas, login, 401 e 403). |
 | `a009fa7` | Cliente inativo não autentica (`isEnabled()`), nem com um token emitido antes de ser desativado. |
